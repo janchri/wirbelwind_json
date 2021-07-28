@@ -5,17 +5,23 @@
 	
 	<div id="vue_app">
 		<p>Playlists</p>
-		<div class="Playlists" v-for="playlist in playlists">
-			<button @click="openPlaylist">{{ playlist.name }}</button>
+		<div id="id_playlists" v-for="playlist in playlists">
+			<button @click="openPlaylist(playlist.uuid)">{{ playlist.name }}</button>
 			
 		</div>
 		<p>Tracks</p>
-		<div class="Tracks" v-for="track in tracks">
-			<button @click="openPlaylist">{{ track.path }}</button>
+		<div id="id_racks" v-for="track in tracks">
+			<button @click="addTrack(track.path)">{{ track.path }}</button>
 		</div>
 		<p>Files</p>
-		<div class="Files" v-for="file in files">
-			<button @click="openPlaylist">{{ file.path }}, {{ file.type }}</button>
+		<div id="id_files" v-for="file in files">
+			<div v-if=file.type=="f" class="file" v-bind:id="file.path">
+				{{ file.path }}
+			</div>
+			<div v-else class="dir" v-bind:id="file.path">
+				<button @click="openDirectory(file.path)">{{ file.path }}</button>
+			</div>
+			
 			
 		</div>
 	</div>
@@ -25,27 +31,26 @@
 	var root_url = "https://github.com/janchri/wirbelwind_json/blob/main/root.json"
 	var music_url = "https://github.com/janchri/wirbelwind_json/blob/main/music.json"
 	var www_url = "https://github.com/janchri/wirbelwind_json/blob/main/www.json"
+	
 	const app = Vue.createApp({
 		data() {
 			return {
 				playlists: [
-					{"name":"name1"}
+					{"uuid":"uuid1","name":"name1"}
 				],
 				tracks : [
-					{"path":"path1"}
+					{"path":"/Music/Lieder/track1.mp3","size":1234}
 				],
 				files : [
-					{"path":"file1","type":"d"},
-					{"path":"dir1","type":"f"},
+					{"path":"/track2.mp3","type":"f"},
+					{"path":"/Music","type":"d"},
 				]
 			}
 		},
-		created() {
-		},
 		methods: {
-			openPlaylist() {},
-			openDirectory() {},
-			addTrack() {}
+			openPlaylist(uuid) {console.log(uuid)},
+			openDirectory(path) {console.log(path)},
+			addTrack(path) {console.log(path)}
 			
 		}
 	})
