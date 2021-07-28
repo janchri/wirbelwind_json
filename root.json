@@ -1,0 +1,18 @@
+[
+{
+	"type" : "d",
+	"path" : "Music"
+},
+{
+	"type" : "d",
+	"path" : "www"
+},
+{
+	"type" : "d",
+	"path" : ".test"
+},
+{
+	"type" : "d",
+	"path" : ".backup"
+}
+]
