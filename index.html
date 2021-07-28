@@ -1,0 +1,56 @@
+<html>
+<head>
+</head>
+	<script src="https://unpkg.com/vue@next"></script>
+	
+	<div id="vue_app">
+		<p>Playlists</p>
+		<div class="Playlists" v-for="playlist in playlists">
+			<button @click="openPlaylist">{{ playlist.name }}</button>
+			
+		</div>
+		<p>Tracks</p>
+		<div class="Tracks" v-for="track in tracks">
+			<button @click="openPlaylist">{{ track.path }}</button>
+		</div>
+		<p>Files</p>
+		<div class="Files" v-for="file in files">
+			<button @click="openPlaylist">{{ file.path }}, {{ file.type }}</button>
+			
+		</div>
+	</div>
+	
+	<script>
+	var playlists_url = "https://github.com/janchri/wirbelwind_json/blob/main/playlist.json"
+	var root_url = "https://github.com/janchri/wirbelwind_json/blob/main/root.json"
+	var music_url = "https://github.com/janchri/wirbelwind_json/blob/main/music.json"
+	var www_url = "https://github.com/janchri/wirbelwind_json/blob/main/www.json"
+	const app = Vue.createApp({
+		data() {
+			return {
+				playlists: [
+					{"name":"name1"}
+				],
+				tracks : [
+					{"path":"path1"}
+				],
+				files : [
+					{"path":"file1","type":"d"},
+					{"path":"dir1","type":"f"},
+				]
+			}
+		},
+		created() {
+		},
+		methods: {
+			openPlaylist() {},
+			openDirectory() {},
+			addTrack() {}
+			
+		}
+	})
+	app.mount('#vue_app')
+	</script>
+	<body>
+	</body>
+</html>
