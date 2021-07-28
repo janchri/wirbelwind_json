@@ -2,55 +2,92 @@
 <head>
 </head>
 	<script src="https://unpkg.com/vue@next"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	
 	<div id="vue_app">
+		
+		<p>WiFi</p>
+		<button @click="scanActiveNetworks">Scan!</button>
+		<div id="id_wifi" v-for="wifi in wifis">
+		</div>
+		
+		<p>Bluetooth </p>
+		<div id="id_bluetooth">
+			<button @click="bluetooth" class="blue_button">(On/Off)</button>
+		</div>
+		
 		<p>Playlists</p>
 		<div id="id_playlists" v-for="playlist in playlists">
 			<button @click="openPlaylist(playlist.uuid)">{{ playlist.name }}</button>
-			
 		</div>
 		<p>Tracks</p>
 		<div id="id_tracks" v-for="track in tracks">
-			<button @click="addTrack(track.path)">{{ track.path }}</button>
+			<button @click="deleteTrack(track.path)">{{ track.path }}</button>
 		</div>
 		<p>Files</p>
 		<div id="id_files" v-for="file in files">
 			<div v-if=file.type=="f" class="file" v-bind:id="file.path">
-				{{ file.path }}
+				<button @click="addTrack(file.path)">{{ file.path }}</button>
 			</div>
 			<div v-else class="dir" v-bind:id="file.path">
 				<button @click="openDirectory(file.path)">{{ file.path }}</button>
 			</div>
-			
-			
 		</div>
 	</div>
 	
 	<script>
-	var playlists_url = "https://github.com/janchri/wirbelwind_json/blob/main/playlist.json"
-	var root_url = "https://github.com/janchri/wirbelwind_json/blob/main/root.json"
-	var music_url = "https://github.com/janchri/wirbelwind_json/blob/main/music.json"
-	var www_url = "https://github.com/janchri/wirbelwind_json/blob/main/www.json"
+	
+	var playlists_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/playlist.json"
+	var root_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/root.json"
+	var music_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/music.json"
+	var www_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/www.json"
 	
 	const app = Vue.createApp({
 		data() {
 			return {
-				playlists: [
-					{"uuid":"uuid1","name":"name1"}
+				playlists: [],
+				tracks : [
+					{"path":"/Music/Lieder/track1.mp3","size":1234},
+					{"path":"/Music/Lieder/track2.mp3","size":4567},
+					{"path":"/Music/Lieder/track3.mp3","size":8901}
 				],
 				tracks : [
 					{"path":"/Music/Lieder/track1.mp3","size":1234}
 				],
-				files : [
-					{"path":"/track2.mp3","type":"f"},
-					{"path":"/Music","type":"d"},
-				]
+				files : [],
+				wifis : []
 			}
 		},
+		created() {
+			fetch(playlists_url)
+				.then(response => response.json())
+				.then(data => (this.playlists = data));
+			fetch(root_url)
+				.then(response => response.json())
+				.then(data => (this.files = data));
+		},
 		methods: {
-			openPlaylist(uuid) {console.log(uuid)},
-			openDirectory(path) {console.log(path)},
-			addTrack(path) {console.log(path)}
+			bluetooth() {
+				console.log("Bluetooth Toogle")
+			},
+			scanActiveNetworks() {
+				console.log("Scanning WiFis")
+			},
+			openPlaylist(uuid) {
+				console.log(uuid)
+			},
+			openDirectory(path) {
+				fetch("https://raw.githubusercontent.com/janchri/wirbelwind_json/main/"+path+".json")
+					.then(response => response.json())
+					.then(data => (this.files = data));
+				console.log(path)
+			},
+			deleteTrack(path) {
+				console.log(path)
+			},
+			addTrack(path) {
+				console.log(path)
+			}
 			
 		}
 	})
