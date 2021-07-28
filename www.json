@@ -1,0 +1,11 @@
+[
+{
+	"type" : "d",
+	"path" : "/www/pub"
+},
+{
+	"type" : "f",
+	"size" : 1234,
+	"path" : "/www/index.html"
+}
+]
