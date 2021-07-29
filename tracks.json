@@ -1,0 +1,12 @@
+[
+{	"path":"/Music/Lieder/track1.mp3",
+	"size":1234
+},
+{
+	"path":"/Music/Lieder/track2.mp3",
+	"size":4567
+},
+{
+	"path":"/Music/Lieder/track3.mp3"
+	,"size":8901
+}
