@@ -1,5 +1,4 @@
 	var playlists_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/playlist.json"
-	var tracks_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/tracks.json"
 	var root_url = "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/root.json"
 	
 	const app = Vue.createApp({
