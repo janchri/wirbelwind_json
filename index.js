@@ -4,11 +4,11 @@
 	const app = Vue.createApp({
 		data() {
 			return {
+				wifis : [],
 				playlists: [],
 				selected_playlist : '',
 				tracks : [],
-				files : [],
-				wifis : []
+				files : []
 			}
 		},
 		created() {
@@ -40,13 +40,15 @@
 					.then(data => (this.files = data));
 				console.log(path)
 			},
-			deleteTrack(path) {
-				console.log(path)
+			deleteTrack(idx) {
+				console.log(idx)
 			},
 			addTrack(path) {
 				console.log(path)
+			},
+			uploadFile(path,filename){
+				conosle.log(path+" "+filename)
 			}
-			
 		}
 	})
 	app.mount('#vue_app')
