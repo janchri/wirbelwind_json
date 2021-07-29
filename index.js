@@ -23,7 +23,7 @@
 		watch:{
 			selected_playlist(val){
 				console.log(val)
-				fetch(tracks_url)
+				fetch("https://raw.githubusercontent.com/janchri/wirbelwind_json/main/tracks_"+val+".json")
 					.then(response => response.json())
 					.then(data => (this.tracks = data));
 			}
