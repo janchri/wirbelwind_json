@@ -27,8 +27,8 @@
 			</div>
 			
 			<p>Tracks</p>
-			<div id="id_tracks" v-for="track in tracks">
-				<button @click="deleteTrack(track.path)">{{ track.path }}</button>
+			<div id="id_tracks" v-for="(track,index) in tracks">
+				<button @click="deleteTrack(index)">{{ track.path }}</button>
 			</div>
 			
 			<p>Directory</p>
