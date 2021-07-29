@@ -17,22 +17,30 @@
 			</div>
 			
 			<p>Playlists</p>
-			<div id="id_playlists" v-for="playlist in playlists">
-				<button @click="openPlaylist(playlist.uuid)">{{ playlist.name }}</button>
+			<div id="id_playlists">
+				<select v-model="selected_playlist">
+					<option disabled value="">Choose playlist</option>
+					<option v-for="playlist in playlists" :value="playlist.uuid">
+						{{ playlist.name }}
+					</option>
+				</select>
 			</div>
+			
 			<p>Tracks</p>
 			<div id="id_tracks" v-for="track in tracks">
 				<button @click="deleteTrack(track.path)">{{ track.path }}</button>
 			</div>
-			<p>Files</p>
+			
+			<p>Directory</p>
 			<div id="id_files" v-for="file in files">
 				<div v-if=file.type=="f" class="file" v-bind:id="file.path">
 					<button @click="addTrack(file.path)">{{ file.path }}</button>
 				</div>
 				<div v-else class="dir" v-bind:id="file.path">
-					<button @click="openDirectory(file.path)">{{ file.path }}</button>
+					<button @click="openSubDirectory(file.path)">{{ file.path }}</button>
 				</div>
 			</div>
+			
 		</div>
 	</body>
 	<script src="index.js"></script>
