@@ -1,21 +1,39 @@
 <html>
 	<head>
 		<script src="https://unpkg.com/vue@next"></script>
-		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script type="text/x-template" id="item-template">
+		  <li>
+		    <div
+                :class="{folder: isFolder}"
+                @click="toggle">
+                {{ item.path }}
+                <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
+                <button v-if="!isFolder" @click="addTrackToPlaylist()">+</button>
+		    </div>
+		    <ul v-show="isOpen" v-if="isFolder">
+                <tree-item
+                    class="item"
+                    v-for="(child, index) in item.children"
+                    v-bind:key="index"
+                    v-bind:item="child"
+                ></tree-item>
+		    </ul>
+		  </li>
+		</script>
 	</head>
 	<body>
 		<div id="vue_app">
-			
+
 			<p>WiFi</p>
 			<button @click="scanActiveNetworks">Scan!</button>
 			<div id="id_wifi" v-for="wifi in wifis">
 			</div>
-			
+
 			<p>Bluetooth </p>
 			<div id="id_bluetooth">
 				<button @click="bluetooth" class="blue_button">(On/Off)</button>
 			</div>
-			
+
 			<p>Playlists</p>
 			<div id="id_playlists">
 				<select v-model="selected_playlist">
@@ -25,22 +43,22 @@
 					</option>
 				</select>
 			</div>
-			
+
 			<p>Tracks</p>
 			<div id="id_tracks" v-for="(track,index) in tracks">
-				<button @click="deleteTrack(index)">{{ track.path }}</button>
+				<button @click="deleteTrack(index)">{{ track }}</button>
 			</div>
-			
+
 			<p>Directory</p>
-			<div id="id_files" v-for="file in files">
-				<div v-if=file.type=="f" class="file" v-bind:id="file.path">
-					<button @click="addTrack(file.path)">{{ file.path }}</button>
-				</div>
-				<div v-else class="dir" v-bind:id="file.path">
-					<button @click="openSubDirectory(file.path)">{{ file.path }}</button>
-				</div>
-			</div>
-			
+			<ul id="tree">
+                <tree-item 
+                    v-for="item in treeData"
+                    class="item"
+                    :class="{folder: item.isFolder}"
+                    v-bind:item="item"
+                ></tree-item>
+            </ul>
+            
 		</div>
 	</body>
 	<script src="index.js"></script>
