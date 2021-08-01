@@ -1,0 +1,74 @@
+<!-- item template -->
+<script type="text/x-template" id="item-template">
+  <li>
+    <div
+         :class="{folder: isFolder}"
+         @click="toggle"
+         @dblclick="makeFolder">
+      {{ item.path }}
+      <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
+    </div>
+    <ul v-show="isOpen" v-if="isFolder">
+      <tree-item
+         class="item"
+         v-for="(child, index) in item.children"
+         v-bind:key="index"
+         v-bind:item="child"
+         @make-folder="$emit('make-folder', $event)"
+         @add-item="$emit('add-item', $event)"
+         ></tree-item>
+      <li class="add" @click="$emit('add-item', item)">+</li>
+    </ul>
+  </li>
+</script>
+
+<!-- the demo root element -->
+<div id="background"></div>
+<main id="main">
+  <header>
+    <h1>Wirbelwind.box</h1>
+  </header>
+
+  <wifi>
+    <h2>WiFi</h2>
+    <button @click="scanActiveNetworks">Scan!</button>
+    <div id="id_wifi" v-for="wifi in wifis"></div>
+  </wifi>
+
+  <bluetooth>
+    <h2>Bluetooth</h2>
+    <div id="id_bluetooth">
+      <button @click="bluetooth" class="blue_button">(On/Off)</button>
+    </div>
+   </bluetooth>
+
+   <playlists>
+    <h2>Playlists</h2>
+    <div id="id_playlists">
+      <select v-model="selected_playlist">
+	      <option disabled value="">Choose playlist</option>
+		    <option v-for="playlist in playlists" :value="playlist.uuid">{{playlist.name}}</option>
+	    </select>
+    </div>
+  </playlists>
+
+  <tracks>
+    <h2>Tracks</h2>
+    <div id="id_tracks" v-for="(track,index) in tracks">
+      <button @click="deleteTrack(index)">{{track.path}}  </button>
+    </div>
+  </tracks>
+
+  <directory>
+    <h2>Directory</h2>
+    <ul id="demo">
+      <tree-item v-for="item in treeData"
+        class="item"
+        :class="{folder: item.isFolder}"
+        v-bind:item="item"
+        @make-folder="makeFolder"
+        @add-item="addItem"
+      ></tree-item>
+    </ul>
+  </directory>
+</div>
