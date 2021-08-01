@@ -1,25 +1,6 @@
 <html>
 	<head>
 		<script src="https://unpkg.com/vue@next"></script>
-		<script type="text/x-template" id="item-template">
-		  <li>
-		    <div
-                :class="{folder: isFolder}"
-                @click="toggle">
-                {{ item.path }}
-                <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
-                <button v-if="!isFolder" @click="addTrackToPlaylist()">+</button>
-		    </div>
-		    <ul v-show="isOpen" v-if="isFolder">
-                <tree-item
-                    class="item"
-                    v-for="(child, index) in item.children"
-                    v-bind:key="index"
-                    v-bind:item="child"
-                ></tree-item>
-		    </ul>
-		  </li>
-		</script>
 	</head>
 	<body>
 		<div id="vue_app">
@@ -34,23 +15,12 @@
 				<button @click="bluetooth" class="blue_button">(On/Off)</button>
 			</div>
 
-			<p>Playlists</p>
-			<div id="id_playlists">
-				<select v-model="selected_playlist">
-					<option disabled value="">Choose playlist</option>
-					<option v-for="playlist in playlists" :value="playlist.uuid">
-						{{ playlist.name }}
-					</option>
-				</select>
-			</div>
-
-			<p>Tracks</p>
-			<div id="id_tracks" v-for="(track,index) in tracks">
-				<button @click="deleteTrack(index)">{{ track }}</button>
-			</div>
+			
+            <p>Playlist</p>
+            <component_playlists></component_playlists>			
 
 			<p>Directory</p>
-			<ul id="tree">
+			<ul id="directory">
                 <tree-item 
                     v-for="item in treeData"
                     class="item"
