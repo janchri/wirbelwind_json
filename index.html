@@ -1,35 +1,37 @@
 <html>
-	<head>
-		<script src="https://unpkg.com/vue@next"></script>
-	</head>
-	<body>
-		<div id="vue_app">
+<head>
+	<script src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
 
-			<p>WiFi</p>
-			<button @click="scanActiveNetworks">Scan!</button>
-			<div id="id_wifi" v-for="wifi in wifis">
-			</div>
-
-			<p>Bluetooth </p>
-			<div id="id_bluetooth">
-				<button @click="bluetooth" class="blue_button">(On/Off)</button>
-			</div>
-
-			
-            <p>Playlist</p>
-            <component_playlists></component_playlists>			
-
-			<p>Directory</p>
-			<ul id="directory">
-                <tree-item 
-                    v-for="item in treeData"
-                    class="item"
-                    :class="{folder: item.isFolder}"
-                    v-bind:item="item"
-                ></tree-item>
-            </ul>
-            
+	<div id="app-networks">
+		<p>WiFi</p>
+		<button @click="scanActiveNetworks">Scan!</button>
+		<div id="id_wifi" v-for="wifi in wifis">
 		</div>
-	</body>
-	<script src="index.js"></script>
+
+		<p>Bluetooth </p>
+		<div id="id_bluetooth">
+			<button @click="bluetooth" class="blue_button">(On/Off)</button>
+		</div>
+	</div>
+
+	<p>Playlist</p>
+	<div id="app-playlists"></div>
+
+	<div id="app-files">
+		<p>Directory</p>
+		<ul id="directory">
+			<tree-item
+			v-for="item in treeData"
+			class="item"
+			:class="{folder: item.isFolder}"
+			v-bind:item="item"
+			></tree-item>
+		</ul>
+	</div>
+
+</div>
+</body>
+<script src="index.js"></script>
 </html>
