@@ -1,0 +1,28 @@
+body {
+  background-color: powderblue;
+}
+
+#app-networks{
+  border: 1px solid hidden;
+}
+
+#app-playlists{
+}
+
+#id_playlists{
+  display: inline-block;
+  width: 200px;
+  heigth: 120px;
+}
+
+#id_playlists img{
+  width: 200px;
+  object-fit: contain;
+}
+
+#id_tracks{
+  vertical-align: top;
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+}
