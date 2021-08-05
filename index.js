@@ -1,124 +1,165 @@
-const uri_wirbelwind_box = "http://192.168.188.44"
-const headers = { "Content-Type" : "application/json" }
+const uri_wirbelwind_box = "http://wirbelwind.box"
+const headers = { "Content-Type": "application/json" }
 
 const { createApp, reactive } = Vue
 
 const networks = createApp({
 	data() {
 		return {
-			wifis : [],
+			wifis: [],
 			password: '',
-			bluetooth_state : false
+			bluetooth_state: false
 		}
 	},
-	mounted(){
-		//axios.get(uri_wirbelwind_box+"/networks?list=active", {headers} )
-		//.then(response => this.wifis = response.data.list_active_wifis)
-		//.catch(error => {
-		//	this.errorMessage = error.message;
-		//	console.error("There was an error!", error);
-		//})
+	mounted() {
+		//axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
+		//	.then(response => this.wifis = response.data.list_active_wifis)
+		//	.catch(error => {
+		//		this.errorMessage = error.message;
+		//		console.error("There was an error!", error);
+		//	})
 	},
 	watch: {
-		bluetooth_state(state){
+		bluetooth_state(state) {
 			console.log(state);
 		}
 	},
 	methods: {
 		addNetwork: async function (event, ssid) {
-			const response = await axios.post(uri_wirbelwind_box+"/networks",
-				{ SSID : ssid,
-					PWD : event.target.value
+			const response = await axios.post(uri_wirbelwind_box + "/networks",
+				{
+					SSID: ssid,
+					PWD: event.target.value
 				});
-  	}
+		}
 	}
 }).mount('#app-networks')
 
-const current_playlist = reactive({
-	uuid : '',
-	name : '',
-	tracks : [],
-	addTrack(path) {
-		axios.post(uri_wirbelwind_box+"/playlist",
-			{
-				uuid : this.uuid,
-				add : [path]
-			})
-			.then(response => this.tracks = response.data[0].tracks)
-	    .catch(error => {
-	      this.errorMessage = error.message;
-	      console.error("There was an error!", error);
-	    });
+const reactive_playlists = reactive({
+	data() {
+		return {
+			playlists: []
+		}
 	},
-	async deleteTrack(path) {
-		const response = await axios.post(uri_wirbelwind_box+"/playlist",
-			{ uuid : this.uuid,
-				delete : [path]
-			});
-			this.tracks = response.data[0].tracks;
-	},
-	async setName(){
-		console.log("setName(): ");
-		console.log("uuid: "+this.uuid);
-		console.log("name: "+this.name);
-		const response = await axios.post(uri_wirbelwind_box+"/playlist",
-			{ uuid : this.uuid,
-				name : this.name
-			});
-		this.name = response.data[0].name;
-	},
-	reset(){
-		console.log("uuid: "+this.uuid)
-		console.log("name: "+this.name)
-		console.log("reset(): "+name)
+	update(){
+		axios.get(uri_wirbelwind_box + "/playlist", { headers })
+		.then(response => this.playlists = response.data)
+		.catch(error => {
+			this.errorMessage = error.message;
+			console.error("There was an error!", error);
+		})
 	}
 })
 
-const playlists = createApp({
+const reactive_current_playlist = reactive({
 	data() {
 		return {
-			playlists: [],
-			current_playlist_uuid : '',
-			current_playlist
+			uuid: '',
+			name: '',
+			tracks: []
 		}
 	},
-	created() {
-		axios.get(uri_wirbelwind_box+"/playlist", {headers} )
-			.then(response => this.playlists = response.data)
+	async update(uuid) {
+		const response = await axios.post(uri_wirbelwind_box + "/playlist", { uuid: uuid });
+		this.uuid = response.data[0].uuid;
+		this.name = response.data[0].name;
+		this.tracks = response.data[0].tracks;
+	},
+	async updateName(name) {
+		const response = await axios.post(uri_wirbelwind_box + "/playlist",
+			{
+				uuid: this.uuid,
+				name: name
+			});
+		this.name = response.data[0].name;
+
+	},
+	addTracks(path) {
+		axios.post(uri_wirbelwind_box + "/playlist",
+			{
+				uuid: this.uuid,
+				add: [path]
+			})
+			.then(response => this.tracks = response.data[0].tracks)
 			.catch(error => {
 				this.errorMessage = error.message;
 				console.error("There was an error!", error);
-
-			})
+			});
 	},
-	watch: {
-		async current_playlist_uuid(uuid){
-			const playlist = { uuid : uuid};
-			const response = await axios.post(uri_wirbelwind_box+"/playlist", playlist);
-    	this.current_playlist.uuid = response.data[0].uuid;
-    	this.current_playlist.name = response.data[0].name;
-    	this.current_playlist.tracks = response.data[0].tracks;
+	async deleteTracks(path) {
+		const response = await axios.post(uri_wirbelwind_box + "/playlist",
+			{
+				uuid: this.uuid,
+				delete: [path]
+			});
+		this.tracks = response.data[0].tracks;
+	},
+	resetSelectedPlaylist() {
+
+	},
+	deleteSelectedPlaylist() {
+
+	}
+
+})
+
+const manage_playlists = createApp({
+	data() {
+		return {
+			reactive_playlists,
+			reactive_current_playlist
 		}
 	},
-	methods:{
-		onSubmitSetName() {
-			current_playlist.setName();
-	  }
+	created() {
+		reactive_playlists.update();
+	},
+	computed: {
+		update_uuid: {
+			get(){
+				//console.log("getter");
+				return reactive_current_playlist.uuid;
+			},
+			set(uuid){
+				//console.log("setter");
+				reactive_current_playlist.update(uuid);
+			}
+		},
+		update_name: {
+			get() {
+				return reactive_current_playlist.name;
+
+			},
+			set(name){
+				reactive_playlists.update();
+				reactive_current_playlist.updateName(name);
+			}
+		}
+	},
+	methods: {
+		change() {
+			console.log("change");
+		},
+		setNameOfCurrent() {
+			reactive_current_playlist.setNameForSelectedPlaylist();
+		},
+		delete() {
+
+		}
 	}
 })
-playlists.mount('#app-playlists')
+manage_playlists.mount('#app-playlists')
 
 const files = createApp({
 	data() {
 		return {
 			treeData: [],
-			current_playlist
+			reactive_current_playlist
 		}
 	},
 	created() {
-		fetch(uri_wirbelwind_box+"/files?path=/")
-		.then(response => response.json())
-		.then(data => (this.treeData = data));
+		fetch(uri_wirbelwind_box + "/files?path=/")
+			.then(response => response.json())
+			.then(data => (this.treeData = data));
 	}
 })
 
@@ -164,16 +205,16 @@ files.component("tree-item", {
 			}
 		},
 		loadChildren() {
-			fetch(uri_wirbelwind_box+"/files?path="+this.item.path)
-			.then(response => response.json())
-			.then(data => this.item.children = data);
+			fetch(uri_wirbelwind_box + "/files?path=" + this.item.path)
+				.then(response => response.json())
+				.then(data => this.item.children = data);
 		},
-		addTrackToPlaylist(){
+		addTrackToPlaylist() {
 			console.log(this.item.path)
-			current_playlist.addTrack(this.item.path)
+			reactive_current_playlist.addTracks(this.item.path)
 		},
-		uploadFile(path,filename){
-			console.log(path+" "+filename)
+		uploadFile(path, filename) {
+			console.log(path + " " + filename)
 		}
 	}
 })

@@ -3,26 +3,42 @@ body {
 }
 
 #app-networks{
+  float: none;
   border: 1px solid hidden;
 }
 
 #app-playlists{
 }
 
-#id_playlists{
-  display: inline-block;
-  width: 200px;
-  heigth: 120px;
+#card_select{
+  float: left;
 }
 
-#id_playlists img{
+#card_image{
+  float: left;
   width: 200px;
-  object-fit: contain;
+  height: 200px;
 }
 
-#id_tracks{
-  vertical-align: top;
-  display: inline-block;
-  width: 120px;
-  height: 120px;
+#card_edit{
+  padding: 0;
+  float: left;
+  width: 200px;
+  height: 200px;
+}
+
+#card_tracks{
+  padding: 0;
+  float: left;
+  width: 600px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+#app-files{
+  clear: both;
+}
+
+#app-files span{
+  cursor: pointer;
 }
