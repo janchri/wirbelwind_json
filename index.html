@@ -1,95 +1,98 @@
 <html>
+
 <head>
 	<link rel="stylesheet" href="style.css">
 	<script src="https://unpkg.com/vue@next"></script>
+	<script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
+
 <body>
 
 	<div id="app-networks">
 		<div id="bluetooth">
 			<span>Bluetooth</span>
-			<input type="radio" id="on" value="true" v-model="bluetooth_state"/>
+			<input type="radio" id="on" value="true" v-model="bluetooth_state" />
 			<label for="on">ON</label>
-			<input type="radio" id="off" value="false" v-model="bluetooth_state"/>
+			<input type="radio" id="off" value="false" v-model="bluetooth_state" />
 			<label for="off">OFF</label>
 		</div>
 		<div id="wifi">
 			<details>
 				<summary>WiFi</summary>
-					<table>
-						<thead>
-							<tr>
-								<th>IDX</th>
-								<th>SSID</th>
-								<th>RSSI</th>
-								<th>ENC</th>
-								<th>PWD</th>
-							</tr>
-						</thead>
-  					<tbody>
-							<tr v-for="(wifi,index) in wifis">
-								<td>
-										{{ wifi.IDX }}
-								</td>
-								<td>
-										{{ wifi.SSID }}
-								</td>
-								<td>
-										{{ wifi.RSSI }}
-								</td>
-								<td>
-										{{ wifi.ENC }}
-								</td>
-								<td>
-									<input type="password" v-on:keyup.enter="addNetwork($event, wifi.SSID)">
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				<table>
+					<thead>
+						<tr>
+							<th>IDX</th>
+							<th>SSID</th>
+							<th>RSSI</th>
+							<th>ENC</th>
+							<th>PWD</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(wifi,index) in wifis">
+							<td>
+								{{ wifi.IDX }}
+							</td>
+							<td>
+								{{ wifi.SSID }}
+							</td>
+							<td>
+								{{ wifi.RSSI }}
+							</td>
+							<td>
+								{{ wifi.ENC }}
+							</td>
+							<td>
+								<input type="password" v-on:keyup.enter="addNetwork($event, wifi.SSID)">
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</details>
 		</div>
 	</div>
 
 	<div id="app-playlists">
-		<div id="id_playlists">
-			<select v-model="current_playlist_uuid">
+		<div id="card_select">
+			<select v-model="update_uuid">
 				<option disabled value="">Choose playlist</option>
-				<option v-for="playlist in playlists" :value="playlist.uuid">
+				<option v-for="playlist in reactive_playlists.playlists" :value="playlist.uuid">
 					{{ playlist.name }}
 				</option>
 			</select>
-			<form v-if="current_playlist.uuid!=''" @submit.prevent="onSubmitSetName">
-				<span>Name: </span>
-      	<input v-model="current_playlist.name" type="text" placeholder='' />
-    	</form>
-			<img src="icons/album_filler.svg" alt="filler">
 		</div>
-		<div id="id_tracks">
-			<table>
-				<tbody>
-					<tr v-for="(track,index) in current_playlist.tracks">
-						<td>{{ track }}</td>
-						<td><button @click="current_playlist.deleteTrack(track)">-</button></td>
-					</tr>
-				</tbody>
-			</table>
+		<div id="card_image">
+			<img src="icons/album_filler.svg" alt="filler" style="width: 200; height: 200;">
+		</div>
+		<div id="card_edit" v-if="reactive_current_playlist.selected_uuid!=''">
+			<form>
+				<input v-model.lazy="update_name" type="text" placeholder='' />
+			</form>
+		</div>
+		<div id="card_tracks" v-if="reactive_current_playlist.selected_uuid!=''">
+			<span>Tracks</span>
+			<ol>
+				<li v-for="(track,index) in reactive_current_playlist.selected_tracks">
+					{{ track }}
+					<button @click="reactive_current_playlist.deleteTracksFromSelectedPlaylist(track)">-</button>
+				</li>
+			</ol>
 		</div>
 	</div>
 	<div id="app-files">
 		<p>Directory</p>
-		<ul id="directory" v-if="current_playlist.uuid!=''">
-			<tree-item
-			v-for="item in treeData"
-			class="item"
-			:class="{folder: item.isFolder}"
-			v-bind:item="item"
-			></tree-item>
+		<ul id="directory" v-if="reactive_current_playlist.selected_uuid!=''">
+			<tree-item v-for="item in treeData" class="item" :class="{folder: item.isFolder}" v-bind:item="item">
+			</tree-item>
 		</ul>
 	</div>
 
 
-</div>
+	</div>
 </body>
-<script src="index.js"></script>
+<script src="index.js">
+</script>
+
 </html>
