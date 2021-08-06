@@ -1,4 +1,4 @@
-const uri_wirbelwind_box = "" //"http://192.168.4.1" //"http://wirbelwind.box"
+const uri_wirbelwind_box = "" //"http://wirbelwind.box" //"http://192.168.4.1" //
 const headers = { "Content-Type": "application/json" }
 
 const { createApp, reactive } = Vue
