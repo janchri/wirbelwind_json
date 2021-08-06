@@ -1,4 +1,4 @@
-const uri_wirbelwind_box = "http://wirbelwind.box"
+const uri_wirbelwind_box = "http://192.168.4.1" //"http://wirbelwind.box"
 const headers = { "Content-Type": "application/json" }
 
 const { createApp, reactive } = Vue
@@ -12,12 +12,12 @@ const networks = createApp({
 		}
 	},
 	mounted() {
-		//axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
-		//	.then(response => this.wifis = response.data.list_active_wifis)
-		//	.catch(error => {
-		//		this.errorMessage = error.message;
-		//		console.error("There was an error!", error);
-		//	})
+		axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
+			.then(response => this.wifis = response.data.list_active_wifis)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			})
 	},
 	watch: {
 		bluetooth_state(state) {
