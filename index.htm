@@ -73,30 +73,28 @@
 		<div id="card_image">
 			<img src="icons/album_filler.svg" alt="filler" style="width: 200; height: 200;">
 		</div>
-		<div id="card_edit" v-if="reactive_current_playlist.uuid!=''">
+		<div id="card_edit" v-if="typeof reactive_current_playlist.uuid!='undefined'">
 			<form>
 				<input v-model.lazy="update_name" type="text" placeholder='' />
 			</form>
 		</div>
-		<div id="card_tracks" v-if="reactive_current_playlist.uuid!=''">
+		<div id="card_tracks" v-if="typeof reactive_current_playlist.uuid!='undefined'">
 			<span>Tracks</span>
 			<ol>
 				<li v-for="(track,index) in reactive_current_playlist.tracks">
-					{{ track }}
-					<button @click="reactive_current_playlist.deleteTracks(track)">-</button>
+					{{ track.split('/').pop() }}
+					<img src="icons/delete.svg" class="deletetrack"
+						@click="reactive_current_playlist.deleteTracks(track)">
 				</li>
 			</ol>
 		</div>
 	</div>
 	<div id="app-files">
 		<p>Directory</p>
-		<ul id="directory" v-if="reactive_current_playlist.uuid!=''">
-			<tree-item v-for="item in treeData" class="item" :class="{folder: item.isFolder}" v-bind:item="item">
-			</tree-item>
+		<ul id="directory">
+			<!-- <ul id="directory" v-if="typeof reactive_current_playlist.uuid!='undefined'">-->
+			<tree-item v-for="item in treeData" class="item" :class="{folder: item.isFolder}" v-bind:item="item"></tree-item>
 		</ul>
-	</div>
-
-
 	</div>
 </body>
 <script src="index.js">
