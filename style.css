@@ -42,3 +42,7 @@ body {
 #app-files span{
   cursor: pointer;
 }
+
+img.uploadfile, img.addtrack, img.deletefile, img.deletetrack {
+  cursor: pointer;
+}

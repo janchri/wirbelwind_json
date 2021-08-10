@@ -1,4 +1,4 @@
-const uri_wirbelwind_box = "" //"http://wirbelwind.box" //"http://192.168.4.1" //
+const uri_wirbelwind_box = "http://wirbelwind.box" //"http://192.168.4.1" //
 const headers = { "Content-Type": "application/json" }
 
 const { createApp, reactive } = Vue
@@ -41,13 +41,13 @@ const reactive_playlists = reactive({
 			playlists: []
 		}
 	},
-	update(){
+	update() {
 		axios.get(uri_wirbelwind_box + "/playlist", { headers })
-		.then(response => this.playlists = response.data)
-		.catch(error => {
-			this.errorMessage = error.message;
-			console.error("There was an error!", error);
-		})
+			.then(response => this.playlists = response.data)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			})
 	}
 })
 
@@ -115,11 +115,11 @@ const manage_playlists = createApp({
 	},
 	computed: {
 		update_uuid: {
-			get(){
+			get() {
 				//console.log("getter");
 				return reactive_current_playlist.uuid;
 			},
-			set(uuid){
+			set(uuid) {
 				//console.log("setter");
 				reactive_current_playlist.update(uuid);
 			}
@@ -129,7 +129,7 @@ const manage_playlists = createApp({
 				return reactive_current_playlist.name;
 
 			},
-			set(name){
+			set(name) {
 				reactive_playlists.update();
 				reactive_current_playlist.updateName(name);
 			}
@@ -141,9 +141,6 @@ const manage_playlists = createApp({
 		},
 		setNameOfCurrent() {
 			reactive_current_playlist.setNameForSelectedPlaylist();
-		},
-		delete() {
-
 		}
 	}
 })
@@ -153,25 +150,41 @@ const files = createApp({
 	data() {
 		return {
 			treeData: [],
-			reactive_current_playlist
+			reactive_current_playlist,
+			files: ''
 		}
 	},
 	created() {
 		fetch(uri_wirbelwind_box + "/files?path=/")
 			.then(response => response.json())
 			.then(data => (this.treeData = data));
+	},
+	methods: {
 	}
 })
 
 files.component("tree-item", {
 	template: `
-	<li>
-	<div
+	<li v-if="!this.item.deleted">
+	<div>
+	{{ item.path.split('/').pop() }}
+	<img src="icons/folder_open.svg" v-if="isFolder && isOpen" 
 	:class="{folder: isFolder}"
 	@click="toggle">
-	{{ item.path }}
-	<span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
-	<button v-if="!isFolder" @click="addTrackToPlaylist()">+</button>
+	<img src="icons/folder_closed.svg" v-if="isFolder && !isOpen" 
+	:class="{folder: isFolder}"
+	@click="toggle">
+	<img src="icons/upload.svg" v-if="isFolder" @click="toggleFileUploadDialog()" class="uploadfile">
+	<img src="icons/addtrack.svg" v-if="!isFolder" @click="addTrackToPlaylist()" class="addtrack">
+	<img src="icons/delete.svg" v-if="!isFolder" @click="deleteFileFromFS()" class="deletefile">
+	<div class="container" v-show="isOpenFileUploadDialog">
+	<div class="large-12 medium-12 small-12 cell">
+	<label>Files
+	<input name='uploadfiles' type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()" />
+	</label>
+	<button v-on:click="submitFiles(path)">Submit</button>
+	</div>
+	</div>
 	</div>
 	<ul v-show="isOpen" v-if="isFolder">
 	<tree-item
@@ -187,7 +200,8 @@ files.component("tree-item", {
 	},
 	data() {
 		return {
-			isOpen: false
+			isOpen: false,
+			isOpenFileUploadDialog: false
 		};
 	},
 	computed: {
@@ -211,10 +225,67 @@ files.component("tree-item", {
 		},
 		addTrackToPlaylist() {
 			console.log(this.item.path)
-			reactive_current_playlist.addTracks(this.item.path)
+			if (reactive_current_playlist.uuid != undefined) {
+				reactive_current_playlist.addTracks(this.item.path);
+			} else {
+				alert("Select playlist first");
+			}
 		},
-		uploadFile(path, filename) {
-			console.log(path + " " + filename)
+		async deleteFileFromFS() {
+			path = this.item.path.split("/"); path.pop();
+			response = await axios.patch(uri_wirbelwind_box + "/files?path=" + path.join("/"), { delete: this.item.path });
+			this.item.deleted = true;
+		},
+		toggleFileUploadDialog() {
+			this.isOpenFileUploadDialog = !this.isOpenFileUploadDialog;
+		},
+		/*
+		Submits all of the files to the server
+	  */
+		submitFiles() {
+			/*
+			  Initialize the form data
+			*/
+			let formData = new FormData();
+
+			/*
+			  Iteate over any file sent over appending the files
+			  to the form data.
+			*/
+			for (var i = 0; i < this.files.length; i++) {
+				let file = this.files[i];
+
+				formData.append('files[' + i + ']', file);
+			}
+
+			// Add Path
+			//formData.append("path", "test");
+
+			/*
+			  Make the request to the POST /multiple-files URL
+			*/
+			success = false;
+			axios.post(uri_wirbelwind_box + this.item.path,
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				}
+			).then(function () {
+				console.log('SUCCESS!!'); 
+			})
+				.catch(function () {
+					console.log('FAILURE!!');
+				});
+				
+			this.loadChildren();
+		},
+		/*
+		  Handles a change on the file upload
+		*/
+		handleFilesUpload() {
+			this.files = this.$refs.files.files;
 		}
 	}
 })
