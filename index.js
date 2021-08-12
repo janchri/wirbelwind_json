@@ -82,13 +82,25 @@ const reactive_current_playlist = reactive({
 			});
 		this.name = response.data[0].name;
 	},
-	updateCurrTimestamp() {
+	async updateCurrTimestamp() {
 		axios.post(uri_wirbelwind_box + "/playlist",
 			{
 				uuid: this.uuid,
 				curr_timestamp: this.curr_timestamp
 			})
 			.then(response => this.curr_timestamp = response.data[1].curr_timestamp)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			});
+	},
+	async updateCurrTrack(index){
+		axios.post(uri_wirbelwind_box + "/playlist",
+			{
+				uuid: this.uuid,
+				curr_track: index
+			})
+			.then(response => this.curr_track = response.data[1].curr_track)
 			.catch(error => {
 				this.errorMessage = error.message;
 				console.error("There was an error!", error);
@@ -173,6 +185,9 @@ const manage_playlists = createApp({
 		},
 		onChangeVolume() {
 			reactive_current_playlist.updateVolume();
+		},
+		onChangeTrack(index){
+			reactive_current_playlist.updateCurrTrack(index);
 		}
 	}
 })
@@ -201,14 +216,14 @@ files.component("tree-item", {
 	<div>
 	{{ item.path.split('/').pop() }}
 	<img src="icons/folder_open.svg" v-if="isFolder && isOpen" 
-	:class="{folder: isFolder}"
+	:class="{folder: isFolder}" class="add_curser_pointer"
 	@click="toggle">
 	<img src="icons/folder_closed.svg" v-if="isFolder && !isOpen" 
-	:class="{folder: isFolder}"
+	:class="{folder: isFolder}" class="add_curser_pointer"
 	@click="toggle">
-	<img src="icons/upload.svg" v-if="isFolder" @click="toggleFileUploadDialog()" class="uploadfile">
-	<img src="icons/addtrack.svg" v-if="!isFolder" @click="addTrackToPlaylist()" class="addtrack">
-	<img src="icons/delete.svg" v-if="!isFolder" @click="deleteFileFromFS()" class="deletefile">
+	<img src="icons/upload.svg" v-if="isFolder" @click="toggleFileUploadDialog()" class="uploadfile add_curser_pointer">
+	<img src="icons/addtrack.svg" v-if="!isFolder" @click="addTrackToPlaylist()" class="addtrack add_curser_pointer">
+	<img src="icons/delete.svg" v-if="!isFolder" @click="deleteFileFromFS()" class="deletefile add_curser_pointer">
 	<div class="container" v-show="isOpenFileUploadDialog">
 	<div class="large-12 medium-12 small-12 cell">
 	<label>Files

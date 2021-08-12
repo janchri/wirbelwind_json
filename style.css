@@ -1,13 +1,16 @@
 body {
-  background-color: powderblue;
 }
 
 #app-networks{
-  float: none;
-  border: 1px solid hidden;
+  border: 1em solid hidden;
+  border-radius: 1em;
+  background-color: rgb(233, 233, 233);
+  padding: 1em 1em 1em 1em;
 }
 
 #app-playlists{
+  clear: both;
+  padding: 1em 1em 1em 1em;
 }
 
 #card_select{
@@ -24,7 +27,7 @@ body {
   padding: 0;
   float: left;
   width: 200px;
-  height: 200px;
+  height: 300px;
 }
 
 #card_tracks{
@@ -37,12 +40,17 @@ body {
 
 #app-files{
   clear: both;
+  border-radius: 1em;
+  background-color: rgb(233, 233, 233);
+  padding: 1em 1em 1em 1em;
 }
 
 #app-files span{
-  cursor: pointer;
 }
 
 img.uploadfile, img.addtrack, img.deletefile, img.deletetrack {
+}
+
+.add_curser_pointer{
   cursor: pointer;
 }
