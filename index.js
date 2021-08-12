@@ -12,14 +12,6 @@ const networks = createApp({
 			bluetooth_state: false
 		}
 	},
-	mounted() {
-		/*axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
-			.then(response => this.wifis = response.data.list_active_wifis)
-			.catch(error => {
-				this.errorMessage = error.message;
-				console.error("There was an error!", error);
-			})*/
-	},
 	watch: {
 		bluetooth_state(state) {
 			console.log(state);
@@ -32,6 +24,15 @@ const networks = createApp({
 					SSID: ssid,
 					PWD: event.target.value
 				});
+		},
+		scanWifis(){
+			console.log("Scanning...");
+			axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
+			.then(response => this.wifis = response.data.list_active_wifis)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			})
 		}
 	}
 }).mount('#app-networks')
@@ -163,7 +164,6 @@ const manage_playlists = createApp({
 				//console.log("setter");
 				reactive_current_playlist.uuid = uuid;
 				reactive_current_playlist.refresh();
-				//this.updateView();
 			}
 		},
 		update_name: {
@@ -187,7 +187,7 @@ const manage_playlists = createApp({
 		onChangeTrack(index) {
 			reactive_current_playlist.updateCurrTrack(index);
 		},
-		updateView(){
+		liveData(){
 			setInterval(() => {
 				reactive_current_playlist.refresh();
 			  }, 5000);
@@ -218,15 +218,16 @@ files.component("tree-item", {
 	<li v-if="!this.item.deleted">
 	<div>
 	{{ item.path.split('/').pop() }}
-	<img src="icons/folder_open.svg" v-if="isFolder && isOpen" 
+	<img src="icons/material-icons/folder_open_black_24dp.svg" v-if="isFolder && isOpen" 
 	:class="{folder: isFolder}" class="add_curser_pointer"
 	@click="toggle">
-	<img src="icons/folder_closed.svg" v-if="isFolder && !isOpen" 
+	<img src="icons/material-icons/folder_black_24dp.svg" v-if="isFolder && !isOpen" 
 	:class="{folder: isFolder}" class="add_curser_pointer"
 	@click="toggle">
-	<img src="icons/upload.svg" v-if="isFolder" @click="toggleFileUploadDialog()" class="uploadfile add_curser_pointer">
-	<img src="icons/addtrack.svg" v-if="!isFolder" @click="addTrackToPlaylist()" class="addtrack add_curser_pointer">
-	<img src="icons/delete.svg" v-if="!isFolder" @click="deleteFileFromFS()" class="deletefile add_curser_pointer">
+	<img src="icons/material-icons/create_new_folder_black_24dp.svg" v-if="isFolder" @click="addFolder()" class="addfolder add_curser_pointer" :class="{folder: isFolder}">
+	<img src="icons/material-icons/upload_file_black_24dp.svg" v-if="isFolder" @click="toggleFileUploadDialog()" class="uploadfile add_curser_pointer" :class="{folder: isFolder}">
+	<img src="icons/material-icons/playlist_add_black_24dp.svg" v-if="!isFolder" @click="addTrackToPlaylist()" class="addtrack add_curser_pointer">
+	<img src="icons/material-icons/remove_black_24dp.svg" v-if="!isFolder" @click="deleteFileFromFS()" class="deletefile add_curser_pointer">
 	<div class="container" v-show="isOpenFileUploadDialog">
 	<div class="large-12 medium-12 small-12 cell">
 	<label>Files
