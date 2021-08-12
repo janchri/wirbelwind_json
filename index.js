@@ -64,8 +64,8 @@ const reactive_current_playlist = reactive({
 			tracks: []
 		}
 	},
-	async update(uuid) {
-		const response = await axios.post(uri_wirbelwind_box + "/playlist", { uuid: uuid });
+	async refresh() {
+		const response = await axios.post(uri_wirbelwind_box + "/playlist", { uuid: this.uuid });
 		this.uuid = response.data[0].uuid;
 		this.name = response.data[0].name;
 		this.tracks = response.data[0].tracks;
@@ -83,28 +83,23 @@ const reactive_current_playlist = reactive({
 		this.name = response.data[0].name;
 	},
 	async updateCurrTimestamp() {
-		axios.post(uri_wirbelwind_box + "/playlist",
+		const response = await axios.post(uri_wirbelwind_box + "/playlist",
 			{
 				uuid: this.uuid,
 				curr_timestamp: this.curr_timestamp
-			})
-			.then(response => this.curr_timestamp = response.data[1].curr_timestamp)
-			.catch(error => {
-				this.errorMessage = error.message;
-				console.error("There was an error!", error);
 			});
+		this.curr_timestamp = response.data[1].curr_timestamp;
 	},
-	async updateCurrTrack(index){
-		axios.post(uri_wirbelwind_box + "/playlist",
+	async updateCurrTrack(index) {
+		const response = await axios.post(uri_wirbelwind_box + "/playlist",
 			{
 				uuid: this.uuid,
-				curr_track: index
-			})
-			.then(response => this.curr_track = response.data[1].curr_track)
-			.catch(error => {
-				this.errorMessage = error.message;
-				console.error("There was an error!", error);
+				curr_track: index,
+				curr_timestamp: 0
 			});
+		this.curr_track = response.data[1].curr_track;
+		this.curr_timestamp = response.data[1].curr_timestamp;
+		this.curr_max_timestamp = response.data[1].curr_max_timestamp;
 	},
 	async updateVolume() {
 		axios.post(uri_wirbelwind_box + "/playlist",
@@ -150,6 +145,7 @@ const reactive_current_playlist = reactive({
 const manage_playlists = createApp({
 	data() {
 		return {
+			countDown: 10,
 			reactive_playlists,
 			reactive_current_playlist
 		}
@@ -165,7 +161,9 @@ const manage_playlists = createApp({
 			},
 			set(uuid) {
 				//console.log("setter");
-				reactive_current_playlist.update(uuid);
+				reactive_current_playlist.uuid = uuid;
+				reactive_current_playlist.refresh();
+				//this.updateView();
 			}
 		},
 		update_name: {
@@ -186,8 +184,13 @@ const manage_playlists = createApp({
 		onChangeVolume() {
 			reactive_current_playlist.updateVolume();
 		},
-		onChangeTrack(index){
+		onChangeTrack(index) {
 			reactive_current_playlist.updateCurrTrack(index);
+		},
+		updateView(){
+			setInterval(() => {
+				reactive_current_playlist.refresh();
+			  }, 5000);
 		}
 	}
 })
