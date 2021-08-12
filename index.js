@@ -1,4 +1,5 @@
-const uri_wirbelwind_box = "http://wirbelwind.box" //"http://192.168.4.1" //
+const uri_wirbelwind_box = "http://192.168.4.1" // "http://wirbelwind.box" // ""
+
 const headers = { "Content-Type": "application/json" }
 
 const { createApp, reactive } = Vue
@@ -56,6 +57,10 @@ const reactive_current_playlist = reactive({
 		return {
 			uuid: '',
 			name: '',
+			volume: 0,
+			curr_track: 0,
+			curr_timestamp: 0,
+			curr_max_timestamp: 0,
 			tracks: []
 		}
 	},
@@ -64,6 +69,10 @@ const reactive_current_playlist = reactive({
 		this.uuid = response.data[0].uuid;
 		this.name = response.data[0].name;
 		this.tracks = response.data[0].tracks;
+		this.volume = response.data[1].volume;
+		this.curr_track = response.data[1].curr_track;
+		this.curr_timestamp = response.data[1].curr_timestamp;
+		this.curr_max_timestamp = response.data[1].curr_max_timestamp;
 	},
 	async updateName(name) {
 		const response = await axios.post(uri_wirbelwind_box + "/playlist",
@@ -72,7 +81,30 @@ const reactive_current_playlist = reactive({
 				name: name
 			});
 		this.name = response.data[0].name;
-
+	},
+	updateCurrTimestamp() {
+		axios.post(uri_wirbelwind_box + "/playlist",
+			{
+				uuid: this.uuid,
+				curr_timestamp: this.curr_timestamp
+			})
+			.then(response => this.curr_timestamp = response.data[1].curr_timestamp)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			});
+	},
+	async updateVolume() {
+		axios.post(uri_wirbelwind_box + "/playlist",
+			{
+				uuid: this.uuid,
+				volume: this.volume
+			})
+			.then(response => this.volume = response.data[1].volume)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			});
 	},
 	addTracks(path) {
 		axios.post(uri_wirbelwind_box + "/playlist",
@@ -136,11 +168,11 @@ const manage_playlists = createApp({
 		}
 	},
 	methods: {
-		change() {
-			console.log("change");
+		onChangeCurrTimestamp() {
+			reactive_current_playlist.updateCurrTimestamp();
 		},
-		setNameOfCurrent() {
-			reactive_current_playlist.setNameForSelectedPlaylist();
+		onChangeVolume() {
+			reactive_current_playlist.updateVolume();
 		}
 	}
 })
@@ -273,12 +305,12 @@ files.component("tree-item", {
 					}
 				}
 			).then(function () {
-				console.log('SUCCESS!!'); 
+				console.log('SUCCESS!!');
 			})
 				.catch(function () {
 					console.log('FAILURE!!');
 				});
-				
+
 			this.loadChildren();
 		},
 		/*
