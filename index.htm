@@ -41,18 +41,21 @@
 						style="width: 200px; height: 200px; clear: both;">
 				</div>
 			</div>
-			<div id="card_tracks" v-if="!!reactive_selected_playlist.uuid">
+			<div id="card_tracks" v-if="!!reactive_selected_playlist.uuid" 
+				v-bind:class="{ active: reactive_selected_playlist.uuid==reactive_active_playlist.uuid }">
 				<ol>
 					<li v-for="(track,index) in reactive_selected_playlist.tracks"
-						:class="{ active: index==reactive_selected_playlist.curr_track }">
+						v-bind:class="{ select: index==reactive_selected_playlist.curr_track }">
 						<div style="float: left;">
 							{{ track.split('/').pop() }}
-							<div v-if=index==reactive_selected_playlist.curr_track>
+							<div v-if="index==reactive_selected_playlist.curr_track">
 								<img src="icons/material-icons/pause_black_24dp.svg" alt="Aktueller Titel">
-								<input type="range" min="0" v-if="reactive_selected_playlist.curr_max_timestamp>0"
+								<input type="range" 
+									min="0"
 									v-bind:max="reactive_selected_playlist.curr_max_timestamp"
 									v-model.number="reactive_selected_playlist.curr_timestamp"
-									@change="onChangeCurrTimestamp()">
+									@change="onChangeCurrTimestamp()"
+									v-if="reactive_selected_playlist.curr_max_timestamp>0">
 							</div>
 							<div v-else>
 								<img src="icons/material-icons/play_circle_outline_black_24dp.svg"

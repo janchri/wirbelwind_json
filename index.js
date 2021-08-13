@@ -1,4 +1,4 @@
-const uri_wirbelwind_box = "http://192.168.4.1" // "http://wirbelwind.box" // ""
+const uri_wirbelwind_box = "" //"http://192.168.4.1" // "http://wirbelwind.box" // ""
 
 const headers = { "Content-Type": "application/json" }
 
@@ -67,6 +67,17 @@ const reactive_playlists = reactive({
 				this.errorMessage = error.message;
 				console.error("There was an error!", error);
 			})
+	}
+})
+
+const reactive_active_playlist = reactive({
+	data() {
+		return {
+			uuid: -1,
+			curr_track: -1,
+			curr_timestamp: -1,
+			curr_max_timestamp: -1
+		}
 	}
 })
 
@@ -168,11 +179,7 @@ const manage_playlists = createApp({
 		return {
 			reactive_playlists,
 			reactive_selected_playlist,
-			evt_sd_player: '',
-			active_curr_track: '',
-			active_curr_timestamp: '',
-			active_curr_max_timestamp: '',
-			active_curr_playlist_uuid: ''
+			reactive_active_playlist
 		}
 	},
 	created() {
@@ -181,31 +188,49 @@ const manage_playlists = createApp({
 	mounted() {
 		var source = new EventSource(uri_wirbelwind_box + "/events");
 		source.addEventListener('evt_sd_player', function (e) {
-			this.evt_sd_player = e.data;
-			console.log(this.evt_sd_player);
+			switch (e.data) {
+				case "play_track":
+					if (reactive_active_playlist.uuid==reactive_selected_playlist.uuid){
+						console.log(reactive_active_playlist.uuid +
+							" " + reactive_active_playlist.curr_timestamp +
+							" " + reactive_active_playlist.curr_max_timestamp +
+							" " + reactive_active_playlist.curr_track);
+						reactive_selected_playlist.curr_track = reactive_active_playlist.curr_track; 
+						reactive_selected_playlist.curr_timestamp = reactive_active_playlist.curr_timestamp;
+						reactive_selected_playlist.curr_max_timestamp = reactive_active_playlist.curr_max_timestamp;
+					}
+					break;
+				case "pause_track":
+					break;
+				case "resume_track":	
+					break;
+				case "stop_track":
+					break;
+				case "next_track":
+					break;
+				case "set_playlist":
+					break;
+				default:
+					console.log("Error event not known!");
+					break;
+			}
+			console.log(e.data);
 		}, false);
 		source.addEventListener('active_curr_playlist', function (e) {
-			this.active_curr_playlist_uuid = e.data;
-			//console.log(this.active_curr_playlist_uuid);
+			reactive_active_playlist.uuid = e.data;
+			//console.log(reactive_active_playlist.uuid);
 		}, false);
 		source.addEventListener('active_curr_track', function (e) {
-			this.active_curr_track = e.data;
-			//console.log(this.active_curr_track);
+			reactive_active_playlist.curr_track = e.data;
+			//console.log(reactive_active_playlist.curr_track);
 		}, false);
 		source.addEventListener('active_curr_max_timestamp', function (e) {
-			this.active_curr_max_timestamp = e.data;
-			//console.log(this.active_curr_max_timestamp);
+			reactive_active_playlist.curr_max_timestamp = e.data;
+			//console.log(reactive_active_playlist.curr_max_timestamp);
 		}, false);
 		source.addEventListener('active_curr_timestamp', function (e) {
-			this.active_curr_timestamp = e.data;
-			if(!!reactive_selected_playlist.uuid && !!this.active_curr_playlist_uuid && !!this.active_curr_track){
-				if(this.active_curr_playlist_uuid==reactive_selected_playlist.uuid){
-						console.log(this.active_curr_timestamp);
-						reactive_selected_playlist.curr_timestamp = this.active_curr_timestamp;
-						reactive_selected_playlist.curr_max_timestamp = this.active_curr_max_timestamp;
-						reactive_selected_playlist.curr_track = this.active_curr_track;
-				}
-			}
+			reactive_active_playlist.curr_timestamp = e.data;
+			//console.log(reactive_active_playlist.curr_timestamp);
 		}, false);
 	},
 	computed: {
