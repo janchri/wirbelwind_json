@@ -4,7 +4,7 @@ const headers = { "Content-Type": "application/json" }
 
 const { createApp, reactive } = Vue
 
-const networks = createApp({
+const settings = createApp({
 	data() {
 		return {
 			wifis: [],
@@ -35,7 +35,7 @@ const networks = createApp({
 			})
 		}
 	}
-}).mount('#app-networks')
+}).mount('#app-settings')
 
 const reactive_playlists = reactive({
 	data() {

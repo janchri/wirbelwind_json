@@ -29,13 +29,8 @@
 					</option>
 				</select>
 			</div>
-			<div id="card_image">
-				<img src="icons/material-icons/album_black_24dp.svg" alt="Testalbumcovery"
-					style="width: 200px; height: 200px;">
-			</div>
-			<div id="card_edit" v-if="typeof reactive_current_playlist.uuid!='undefined'">
-				<details>
-					<summary class="add_curser_pointer">Editieren</summary>
+			<div id="selected_album">
+				<div id="card_edit" v-if="typeof reactive_current_playlist.uuid!='undefined'">
 					<form>
 						<input v-model.lazy="update_name" type="text" placeholder='' @keypress.enter.prevent />
 					</form>
@@ -43,33 +38,35 @@
 						@change="onChangeVolume()" class="add_curser_pointer">
 
 					<img src="icons/material-icons/volume_up_black_24dp.svg" alt="Volume UP">
-				</details>
-				<details>
-					<summary class="add_curser_pointer">Titel</summary>
-					<div id="card_tracks">
-						<ol>
-							<li v-for="(track,index) in reactive_current_playlist.tracks">
-								{{ track.split('/').pop() }}
-								<img src="icons/material-icons/remove_black_24dp.svg"
-									class="deletetrack add_curser_pointer"
-									v-on:click="reactive_current_playlist.deleteTracks(track)">
-								<div v-if=index==reactive_current_playlist.curr_track>
-									<img src="icons/material-icons/pause_black_24dp.svg" alt="Aktueller Titel">
-									<input type="range" min="0" v-if="reactive_current_playlist.curr_max_timestamp>0"
-										v-bind:max="reactive_current_playlist.curr_max_timestamp"
-										v-model.number="reactive_current_playlist.curr_timestamp"
-										@change="onChangeCurrTimestamp()">
-								</div>
-								<div v-else>
-									<img src="icons/material-icons/play_circle_outline_black_24dp.svg"
-										class="add_curser_pointer" alt="Aktueller Titel"
-										v-on:click="onChangeTrack(index)">
-								</div>
-							</li>
-						</ol>
-					</div>
-				</details>
+				</div>
+				<div id="card_image">
+					<img src="icons/material-icons/album_black_24dp.svg" alt="Testalbumcovery"
+						style="width: 200px; height: 200px;">
+				</div>
 			</div>
+			<details>
+				<summary class="add_curser_pointer">Titel</summary>
+				<div id="card_tracks">
+					<ol>
+						<li v-for="(track,index) in reactive_current_playlist.tracks">
+							{{ track.split('/').pop() }}
+							<img src="icons/material-icons/remove_black_24dp.svg" class="deletetrack add_curser_pointer"
+								v-on:click="reactive_current_playlist.deleteTracks(track)">
+							<div v-if=index==reactive_current_playlist.curr_track>
+								<img src="icons/material-icons/pause_black_24dp.svg" alt="Aktueller Titel">
+								<input type="range" min="0" v-if="reactive_current_playlist.curr_max_timestamp>0"
+									v-bind:max="reactive_current_playlist.curr_max_timestamp"
+									v-model.number="reactive_current_playlist.curr_timestamp"
+									@change="onChangeCurrTimestamp()">
+							</div>
+							<div v-else>
+								<img src="icons/material-icons/play_circle_outline_black_24dp.svg"
+									class="add_curser_pointer" alt="Aktueller Titel" v-on:click="onChangeTrack(index)">
+							</div>
+						</li>
+					</ol>
+				</div>
+			</details>
 		</details>
 	</div>
 	<div id="app-files">

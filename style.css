@@ -1,33 +1,45 @@
 body {
 }
 
-#app-networks{
-  border: 1em solid hidden;
+.add_curser_pointer{
+  cursor: pointer;
+}
+
+#app-settings{
   border-radius: 1em;
   background-color: rgb(233, 233, 233);
   padding: 1em 1em 1em 1em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 1em 1em;
 }
 
 #app-playlists{
-  clear: both;
+  border-radius: 1em;
+  background-color: rgb(233, 233, 233);
   padding: 1em 1em 1em 1em;
+  overflow: auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 1em 1em;
 }
 
 #card_select{
   float: left;
 }
 
-#card_image{
+#selected_album{
   float: left;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+#card_image{
   width: 200px;
   height: 200px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 #card_edit{
-  padding: 0;
-  float: left;
   width: 200px;
-  height: 300px;
 }
 
 #card_tracks{
@@ -41,16 +53,10 @@ body {
 #app-files{
   clear: both;
   border-radius: 1em;
-  background-color: rgb(233, 233, 233);
   padding: 1em 1em 1em 1em;
-}
-
-#app-files span{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 1em 1em;
 }
 
 img.uploadfile, img.addtrack, img.deletefile, img.deletetrack {
-}
-
-.add_curser_pointer{
-  cursor: pointer;
 }
