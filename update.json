@@ -13,13 +13,13 @@
             "sd_path": "/www/pub/icons"
         },
         {
+            "sd_path": "/www/pub/icons/material-icons"
+        },
+        {
             "sd_path": "/www/pub/images"
         },
         {
             "sd_path": "/www/pub/scripts"
-        },
-        {
-            "sd_path": "/www/pub/icons"
         }
     ],
     "list_update_files": [
@@ -35,22 +35,7 @@
             "uri_local": "/www/pub/style.css",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/style.css"
         },
-        {
-            "uri_local": "/www/pub/favicon.ico",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/favicon.ico"
-        },
-        {
-            "uri_local": "/www/pub/icons/album_filler.svg",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/icons/album_filler.svg"
-        },
-        {
-            "uri_local": "/www/pub/icons/bluetooth.svg",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/icons/bluetooth.svg"
-        },
-        {
-            "uri_local": "/www/pub/icons/wireless.svg",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/icons/wireless.svg"
-        },
+
         {
             "uri_local": "/www/pub/scripts/vue.global.prod.js.gz",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/vue.global.prod.js.gz"
@@ -67,6 +52,7 @@
             "uri_local": "/www/pub/scripts/axios.min.map",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/axios.min.map"
         },
+        
         {
             "uri_local": "/www/pub/version.json",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/version.json"
