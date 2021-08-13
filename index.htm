@@ -84,7 +84,7 @@
 	<div id="app-settings">
 		<details>
 			<summary class="add_curser_pointer">
-				Einstellungen <img src="icons/material-icons/settings_black_24dp.svg" alt="Updates">
+				Einstellungen <img src="icons/material-icons/settings_black_24dp.svg" alt="Einstellungen">
 			</summary>
 			<div id="bluetooth" style="padding-left: 1em;">
 				<details>
@@ -136,19 +136,21 @@
 			</div>
 			<div id="updates" style="padding-left: 1em">
 				<details>
-					<summary class="add_curser_pointer">
+					<summary class="add_curser_pointer" v-on:click="findUpdates()">
 						Updates <img src="icons/material-icons/update_black_24dp.svg" alt="Updates">
 					</summary>
 					<ul>
 						<li>
-							Firmware Version:
+							Firmware Version: <span style="color:blue">{{ current_firmware_version }}</span>
+							<span style="color:red" v-if:"current_firmware_version<new_firmware_version">...update to {{ new_firmware_version }}</span>
 							<img src="icons/material-icons/system_update_alt_black_24dp.svg" alt="Firmware-Update"
-								class="add_curser_pointer">
+								class="add_curser_pointer" v-if:"current_firmware_version<new_firmware_version" v-on:click="updateFirmware()">
 						</li>
 						<li>
-							Website Version:
+							Website Version: <span style="color:blue">{{ current_website_version }}</span>
+							<span style="color:red" v-if:"current_website_version<new_website_version">...update to {{ new_website_version }}</span>
 							<img src="icons/material-icons/browser_updated_black_24dp.svg" alt="Website-Update"
-								class="add_curser_pointer">
+								class="add_curser_pointer" v-if:"current_website_version<new_website_version" v-on:click="updateWebsite()">
 						</li>
 					</ul>
 				</details>

@@ -9,7 +9,11 @@ const settings = createApp({
 		return {
 			wifis: [],
 			password: '',
-			bluetooth_state: false
+			bluetooth_state: false,
+			new_firmware_version: '',
+			new_website_version: '',
+			current_firmware_version: '',
+			current_website_version: ''
 		}
 	},
 	watch: {
@@ -25,14 +29,27 @@ const settings = createApp({
 					PWD: event.target.value
 				});
 		},
-		scanWifis(){
+		scanWifis() {
 			console.log("Scanning...");
 			axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
-			.then(response => this.wifis = response.data.list_active_wifis)
-			.catch(error => {
-				this.errorMessage = error.message;
-				console.error("There was an error!", error);
-			})
+				.then(response => this.wifis = response.data.list_active_wifis)
+				.catch(error => {
+					this.errorMessage = error.message;
+					console.error("There was an error!", error);
+				})
+		},
+		async findUpdates() {
+			const response = await axios.get(uri_wirbelwind_box + "/update?refresh", { headers });
+			this.new_firmware_version = response.data.new_firmware_version;
+			this.new_website_version = response.data.new_website_version;
+			this.current_firmware_version = response.data.current_firmware_version;
+			this.current_website_version = response.data.current_website_version;
+		},
+		updateFirmware() {
+			axios.get(uri_wirbelwind_box + "/update?firmware", { headers });
+		},
+		updateWebsite() {
+			axios.get(uri_wirbelwind_box + "/update?website", { headers });
 		}
 	}
 }).mount('#app-settings')
@@ -127,12 +144,15 @@ const reactive_current_playlist = reactive({
 			});
 	},
 	async deleteTracks(path) {
-		const response = await axios.post(uri_wirbelwind_box + "/playlist",
-			{
-				uuid: this.uuid,
-				delete: [path]
-			});
-		this.tracks = response.data[0].tracks;
+		var check = confirm("Wirklich löschen?");
+		if (check) {
+			const response = await axios.post(uri_wirbelwind_box + "/playlist",
+				{
+					uuid: this.uuid,
+					delete: [path]
+				});
+			this.tracks = response.data[0].tracks;
+		}
 	},
 	resetSelectedPlaylist() {
 
@@ -187,10 +207,10 @@ const manage_playlists = createApp({
 		onChangeTrack(index) {
 			reactive_current_playlist.updateCurrTrack(index);
 		},
-		liveData(){
+		liveData() {
 			setInterval(() => {
 				reactive_current_playlist.refresh();
-			  }, 5000);
+			}, 5000);
 		}
 	}
 })
@@ -220,14 +240,18 @@ files.component("tree-item", {
 	{{ item.path.split('/').pop() }}
 	<img src="icons/material-icons/folder_open_black_24dp.svg" v-if="isFolder && isOpen" 
 	:class="{folder: isFolder}" class="add_curser_pointer"
-	@click="toggle">
+	v-on:click="toggle">
 	<img src="icons/material-icons/folder_black_24dp.svg" v-if="isFolder && !isOpen" 
 	:class="{folder: isFolder}" class="add_curser_pointer"
-	@click="toggle">
-	<img src="icons/material-icons/create_new_folder_black_24dp.svg" v-if="isFolder" @click="addFolder()" class="addfolder add_curser_pointer" :class="{folder: isFolder}">
-	<img src="icons/material-icons/upload_file_black_24dp.svg" v-if="isFolder" @click="toggleFileUploadDialog()" class="uploadfile add_curser_pointer" :class="{folder: isFolder}">
-	<img src="icons/material-icons/playlist_add_black_24dp.svg" v-if="!isFolder" @click="addTrackToPlaylist()" class="addtrack add_curser_pointer">
-	<img src="icons/material-icons/remove_black_24dp.svg" v-if="!isFolder" @click="deleteFileFromFS()" class="deletefile add_curser_pointer">
+	v-on:click="toggle">
+	<img src="icons/material-icons/settings_black_24dp.svg" alt="Einstellungen" v-if="isFolder" class="add_curser_pointer" v-on:click="toggleFolderDialog()">
+	<div class="container" v-show="isOpenFolderDialog">
+	<form>
+	<input v-model.lazy="new_folder_name" type="text" placeholder='' @keypress.enter.prevent />
+	</form>
+	<img src="icons/material-icons/delete_black_24dp.svg" alt="Ordner löschen" v-if="isFolder" class="add_curser_pointer" v-on:click="deleteFolder()">
+	<img src="icons/material-icons/create_new_folder_black_24dp.svg" v-if="isFolder" v-on:click="createFolder(new_folder_name)" class="addfolder add_curser_pointer" :class="{folder: isFolder}">
+	<img src="icons/material-icons/upload_file_black_24dp.svg" v-if="isFolder" v-on:click="toggleFileUploadDialog()" class="uploadfile add_curser_pointer" :class="{folder: isFolder}">
 	<div class="container" v-show="isOpenFileUploadDialog">
 	<div class="large-12 medium-12 small-12 cell">
 	<label>Files
@@ -236,6 +260,9 @@ files.component("tree-item", {
 	<button v-on:click="submitFiles(path)">Submit</button>
 	</div>
 	</div>
+	</div>
+	<img src="icons/material-icons/playlist_add_black_24dp.svg" v-if="!isFolder" v-on:click="addTrackToPlaylist()" class="addtrack add_curser_pointer">
+	<img src="icons/material-icons/remove_black_24dp.svg" v-if="!isFolder" v-on:click="deleteFile()" class="deletefile add_curser_pointer">
 	</div>
 	<ul v-show="isOpen" v-if="isFolder">
 	<tree-item
@@ -252,7 +279,8 @@ files.component("tree-item", {
 	data() {
 		return {
 			isOpen: false,
-			isOpenFileUploadDialog: false
+			isOpenFileUploadDialog: false,
+			isOpenFolderDialog: false
 		};
 	},
 	computed: {
@@ -282,10 +310,27 @@ files.component("tree-item", {
 				alert("Select playlist first");
 			}
 		},
-		async deleteFileFromFS() {
-			path = this.item.path.split("/"); path.pop();
-			response = await axios.patch(uri_wirbelwind_box + "/files?path=" + path.join("/"), { delete: this.item.path });
-			this.item.deleted = true;
+		async deleteFile() {
+			var check = confirm("Wirklich löschen?");
+			if (check) {
+				path = this.item.path.split("/"); path.pop();
+				response = await axios.patch(uri_wirbelwind_box + "/files?path=" + path.join("/"), { delete_file: this.item.path });
+				this.item.deleted = true;
+			}
+		},
+		toggleFolderDialog() {
+			this.isOpenFolderDialog = !this.isOpenFolderDialog;
+		},
+		async createFolder(name) {
+			response = await axios.post(uri_wirbelwind_box + "/files?path=" + this.item.path, { create_folder: this.item.path + "/" + name });
+		},
+		async deleteFolder() {
+			var check = confirm("Wirklich löschen?");
+			if (check) {
+				path = this.item.path.split("/"); path.pop();
+				response = await axios.patch(uri_wirbelwind_box + "/files?path=" + path.join("/"), { delete_folder: this.item.path });
+				this.item.deleted = true;
+			}
 		},
 		toggleFileUploadDialog() {
 			this.isOpenFileUploadDialog = !this.isOpenFileUploadDialog;
