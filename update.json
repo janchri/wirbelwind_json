@@ -24,6 +24,10 @@
     ],
     "list_update_files": [
         {
+            "uri_local": "/www/pub/favicon.ico",
+            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/favicon.ico"
+        },
+        {
             "uri_local": "/www/pub/index.htm",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/index.htm"
         },
@@ -52,7 +56,7 @@
             "uri_local": "/www/pub/scripts/axios.min.map",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/axios.min.map"
         },
-        
+
         {
             "uri_local": "/www/pub/version.json",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/version.json"
