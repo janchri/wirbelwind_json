@@ -70,7 +70,7 @@ const reactive_playlists = reactive({
 	}
 })
 
-const reactive_current_playlist = reactive({
+const reactive_selected_playlist = reactive({
 	data() {
 		return {
 			uuid: '',
@@ -166,51 +166,80 @@ const reactive_current_playlist = reactive({
 const manage_playlists = createApp({
 	data() {
 		return {
-			countDown: 10,
 			reactive_playlists,
-			reactive_current_playlist
+			reactive_selected_playlist,
+			evt_sd_player: '',
+			active_curr_track: '',
+			active_curr_timestamp: '',
+			active_curr_max_timestamp: '',
+			active_curr_playlist_uuid: ''
 		}
 	},
 	created() {
 		reactive_playlists.update();
 	},
+	mounted() {
+		var source = new EventSource(uri_wirbelwind_box + "/events");
+		source.addEventListener('evt_sd_player', function (e) {
+			this.evt_sd_player = e.data;
+			console.log(this.evt_sd_player);
+		}, false);
+		source.addEventListener('active_curr_playlist', function (e) {
+			this.active_curr_playlist_uuid = e.data;
+			//console.log(this.active_curr_playlist_uuid);
+		}, false);
+		source.addEventListener('active_curr_track', function (e) {
+			this.active_curr_track = e.data;
+			//console.log(this.active_curr_track);
+		}, false);
+		source.addEventListener('active_curr_max_timestamp', function (e) {
+			this.active_curr_max_timestamp = e.data;
+			//console.log(this.active_curr_max_timestamp);
+		}, false);
+		source.addEventListener('active_curr_timestamp', function (e) {
+			this.active_curr_timestamp = e.data;
+			if(!!reactive_selected_playlist.uuid && !!this.active_curr_playlist_uuid && !!this.active_curr_track){
+				if(this.active_curr_playlist_uuid==reactive_selected_playlist.uuid){
+						console.log(this.active_curr_timestamp);
+						reactive_selected_playlist.curr_timestamp = this.active_curr_timestamp;
+						reactive_selected_playlist.curr_max_timestamp = this.active_curr_max_timestamp;
+						reactive_selected_playlist.curr_track = this.active_curr_track;
+				}
+			}
+		}, false);
+	},
 	computed: {
 		update_uuid: {
 			get() {
 				//console.log("getter");
-				return reactive_current_playlist.uuid;
+				return reactive_selected_playlist.uuid;
 			},
 			set(uuid) {
 				//console.log("setter");
-				reactive_current_playlist.uuid = uuid;
-				reactive_current_playlist.refresh();
+				reactive_selected_playlist.uuid = uuid;
+				reactive_selected_playlist.refresh();
 			}
 		},
 		update_name: {
 			get() {
-				return reactive_current_playlist.name;
+				return reactive_selected_playlist.name;
 
 			},
 			set(name) {
 				reactive_playlists.update();
-				reactive_current_playlist.updateName(name);
+				reactive_selected_playlist.updateName(name);
 			}
 		}
 	},
 	methods: {
 		onChangeCurrTimestamp() {
-			reactive_current_playlist.updateCurrTimestamp();
+			reactive_selected_playlist.updateCurrTimestamp();
 		},
 		onChangeVolume() {
-			reactive_current_playlist.updateVolume();
+			reactive_selected_playlist.updateVolume();
 		},
 		onChangeTrack(index) {
-			reactive_current_playlist.updateCurrTrack(index);
-		},
-		liveData() {
-			setInterval(() => {
-				reactive_current_playlist.refresh();
-			}, 5000);
+			reactive_selected_playlist.updateCurrTrack(index);
 		}
 	}
 })
@@ -220,7 +249,7 @@ const files = createApp({
 	data() {
 		return {
 			treeData: [],
-			reactive_current_playlist,
+			reactive_selected_playlist,
 			files: ''
 		}
 	},
@@ -304,8 +333,8 @@ files.component("tree-item", {
 		},
 		addTrackToPlaylist() {
 			console.log(this.item.path)
-			if (reactive_current_playlist.uuid != undefined) {
-				reactive_current_playlist.addTracks(this.item.path);
+			if (reactive_selected_playlist.uuid != undefined) {
+				reactive_selected_playlist.addTracks(this.item.path);
 			} else {
 				alert("Select playlist first");
 			}

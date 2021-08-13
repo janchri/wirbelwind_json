@@ -26,7 +26,7 @@
 					</option>
 				</select>
 			</div>
-			<div id="selected_album" v-if="typeof reactive_current_playlist.uuid!='undefined'">
+			<div id="selected_album" v-if="!!reactive_selected_playlist.uuid">
 				<div id="card_image">
 					<div id="card_edit">
 						<form style="text-align:center">
@@ -34,24 +34,24 @@
 								style="background-color:inherit; margin-top: 1em;" />
 						</form>
 						<img src="icons/material-icons/volume_up_black_24dp.svg" alt="Volume UP">
-						<input type="range" min="0" v-bind:max="20" v-model.number="reactive_current_playlist.volume"
+						<input type="range" min="0" v-bind:max="20" v-model.number="reactive_selected_playlist.volume"
 							@change="onChangeVolume()" class="add_curser_pointer">
 					</div>
 					<img src="icons/material-icons/album_black_24dp.svg" alt="Testalbumcovery"
 						style="width: 200px; height: 200px; clear: both;">
 				</div>
 			</div>
-			<div id="card_tracks" v-if="typeof reactive_current_playlist.uuid!='undefined'">
+			<div id="card_tracks" v-if="!!reactive_selected_playlist.uuid">
 				<ol>
-					<li v-for="(track,index) in reactive_current_playlist.tracks"
-						:class="{ active: index==reactive_current_playlist.curr_track }">
+					<li v-for="(track,index) in reactive_selected_playlist.tracks"
+						:class="{ active: index==reactive_selected_playlist.curr_track }">
 						<div style="float: left;">
 							{{ track.split('/').pop() }}
-							<div v-if=index==reactive_current_playlist.curr_track>
+							<div v-if=index==reactive_selected_playlist.curr_track>
 								<img src="icons/material-icons/pause_black_24dp.svg" alt="Aktueller Titel">
-								<input type="range" min="0" v-if="reactive_current_playlist.curr_max_timestamp>0"
-									v-bind:max="reactive_current_playlist.curr_max_timestamp"
-									v-model.number="reactive_current_playlist.curr_timestamp"
+								<input type="range" min="0" v-if="reactive_selected_playlist.curr_max_timestamp>0"
+									v-bind:max="reactive_selected_playlist.curr_max_timestamp"
+									v-model.number="reactive_selected_playlist.curr_timestamp"
 									@change="onChangeCurrTimestamp()">
 							</div>
 							<div v-else>
@@ -61,7 +61,7 @@
 						</div>
 						<div style="float: right;">
 							<img src="icons/material-icons/remove_circle_black_24dp.svg" class="deletetrack add_curser_pointer"
-							v-on:click="reactive_current_playlist.deleteTracks(track)">
+							v-on:click="reactive_selected_playlist.deleteTracks(track)">
 						</div>
 						<div style="clear: both;"></div>
 					</li>
@@ -75,7 +75,7 @@
 				Filesystem <img src="icons/material-icons/home_black_24dp.svg" alt="Updates">
 			</summary>
 			<ul id="directory">
-				<!-- <ul id="directory" v-if="typeof reactive_current_playlist.uuid!='undefined'">-->
+				<!-- <ul id="directory" v-if="typeof reactive_selected_playlist.uuid!='undefined'">-->
 				<tree-item v-for="item in treeData" class="item" :class="{folder: item.isFolder}" v-bind:item="item">
 				</tree-item>
 			</ul>
