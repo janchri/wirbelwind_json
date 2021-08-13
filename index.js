@@ -262,7 +262,7 @@ files.component("tree-item", {
 	</div>
 	</div>
 	<img src="icons/material-icons/playlist_add_black_24dp.svg" v-if="!isFolder" v-on:click="addTrackToPlaylist()" class="addtrack add_curser_pointer">
-	<img src="icons/material-icons/remove_black_24dp.svg" v-if="!isFolder" v-on:click="deleteFile()" class="deletefile add_curser_pointer">
+	<img src="icons/material-icons/remove_circle_black_24dp.svg" v-if="!isFolder" v-on:click="deleteFile()" class="deletefile add_curser_pointer">
 	</div>
 	<ul v-show="isOpen" v-if="isFolder">
 	<tree-item
