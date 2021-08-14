@@ -27,7 +27,7 @@
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/style.css"
         },
         {
-            "uri_local": "/config/version.json",
+            "uri_local": "/www/pub/version.json",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/version.json"
         }
     ]

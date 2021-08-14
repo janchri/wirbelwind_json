@@ -148,19 +148,17 @@
 					<ul>
 						<li>
 							Firmware Version: <span style="color:blue">{{ current_firmware_version }}</span>
-							<span style="color:red" v-if:"current_firmware_version<new_firmware_version">...update to {{
+							<span style="color:red">...update to {{
 								new_firmware_version }}</span>
 							<img src="icons/material-icons/system_update_alt_black_24dp.svg" alt="Firmware-Update"
-								class="add_curser_pointer" v-if:"current_firmware_version<new_firmware_version"
-								v-on:click="updateFirmware()">
+								class="add_curser_pointer" v-on:click="updateFirmware()">
 						</li>
 						<li>
 							Website Version: <span style="color:blue">{{ current_website_version }}</span>
-							<span style="color:red" v-if:"current_website_version<new_website_version">...update to {{
+							<span style="color:red">...update to {{
 								new_website_version }}</span>
 							<img src="icons/material-icons/browser_updated_black_24dp.svg" alt="Website-Update"
-								class="add_curser_pointer" v-if:"current_website_version<new_website_version"
-								v-on:click="updateWebsite()">
+								class="add_curser_pointer" v-on:click="updateWebsite()">
 						</li>
 					</ul>
 				</details>
