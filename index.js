@@ -1,4 +1,4 @@
-const uri_wirbelwind_box = "" //"http://192.168.4.1" // "http://wirbelwind.box" // ""
+const uri_wirbelwind_box = "" //"http://192.168.4.1" //"http://wirbelwind.box" // 
 
 const headers = { "Content-Type": "application/json" }
 
@@ -10,16 +10,38 @@ const settings = createApp({
 			wifis: [],
 			password: '',
 			bluetooth_state: false,
+			wifi_task_state: false,
+			toggleWifiView: false,
 			new_firmware_version: '',
 			new_website_version: '',
 			current_firmware_version: '',
-			current_website_version: ''
+			current_website_version: '',
+			toggleUpdateView: false,
 		}
+	},
+	created() {
+		axios.get(uri_wirbelwind_box + "/networks?enable_wifi_task", { headers })
+			.then(response => this.wifi_task_state = response.data.enable_wifi_task)
+			.catch(error => {
+				this.errorMessage = error.message;
+				console.error("There was an error!", error);
+			})
 	},
 	watch: {
 		bluetooth_state(state) {
-			console.log(state);
+			alert("Diese Funktion ist aktuell auf Grund von Speichermangel noch nicht verfügbar :-)");
+		},
+		wifi_task_state(state) {
+			axios.get(uri_wirbelwind_box + "/networks?enable_wifi_task=" + state, { headers })
+				.then(response => this.wifi_task_state = response.data.enable_wifi_task)
+				.catch(error => {
+					this.errorMessage = error.message;
+					console.error("There was an error!", error);
+				})
 		}
+	},
+	computed: {
+
 	},
 	methods: {
 		addNetwork: async function (event, ssid) {
@@ -29,21 +51,27 @@ const settings = createApp({
 					PWD: event.target.value
 				});
 		},
-		scanWifis() {
-			console.log("Scanning...");
-			axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
-				.then(response => this.wifis = response.data.list_active_wifis)
-				.catch(error => {
-					this.errorMessage = error.message;
-					console.error("There was an error!", error);
-				})
+		toggleWifi() {
+			if (!this.toggleWifiView) {
+				console.log("Scanning...");
+				axios.get(uri_wirbelwind_box + "/networks?list=active", { headers })
+					.then(response => this.wifis = response.data.list_active_wifis)
+					.catch(error => {
+						this.errorMessage = error.message;
+						console.error("There was an error!", error);
+					})
+			}
+			this.toggleWifiView = !this.toggleWifiView;
 		},
-		async findUpdates() {
-			const response = await axios.get(uri_wirbelwind_box + "/update?refresh", { headers });
-			this.new_firmware_version = response.data.new_firmware_version;
-			this.new_website_version = response.data.new_website_version;
-			this.current_firmware_version = response.data.current_firmware_version;
-			this.current_website_version = response.data.current_website_version;
+		async toggleUpdates() {
+			if (!this.toggleUpdateView) {
+				const response = await axios.get(uri_wirbelwind_box + "/update?refresh", { headers });
+				this.new_firmware_version = response.data.new_firmware_version;
+				this.new_website_version = response.data.new_website_version;
+				this.current_firmware_version = response.data.current_firmware_version;
+				this.current_website_version = response.data.current_website_version;
+			}
+			this.toggleUpdateView = !this.toggleUpdateView;
 		},
 		updateFirmware() {
 			axios.get(uri_wirbelwind_box + "/update?firmware", { headers });
@@ -131,7 +159,7 @@ const reactive_selected_playlist = reactive({
 		this.curr_max_timestamp = response.data[1].curr_max_timestamp;
 	},
 	async updateVolume() {
-		axios.post(uri_wirbelwind_box + "/playlist",
+		await axios.post(uri_wirbelwind_box + "/playlist",
 			{
 				uuid: this.uuid,
 				volume: this.volume
@@ -142,8 +170,8 @@ const reactive_selected_playlist = reactive({
 				console.error("There was an error!", error);
 			});
 	},
-	addTracks(path) {
-		axios.post(uri_wirbelwind_box + "/playlist",
+	async addTracks(path) {
+		await axios.post(uri_wirbelwind_box + "/playlist",
 			{
 				uuid: this.uuid,
 				add: [path]
@@ -165,10 +193,10 @@ const reactive_selected_playlist = reactive({
 			this.tracks = response.data[0].tracks;
 		}
 	},
-	resetSelectedPlaylist() {
+	reset() {
 
 	},
-	deleteSelectedPlaylist() {
+	delete() {
 
 	}
 
@@ -190,19 +218,19 @@ const manage_playlists = createApp({
 		source.addEventListener('evt_sd_player', function (e) {
 			switch (e.data) {
 				case "play_track":
-					if (reactive_active_playlist.uuid==reactive_selected_playlist.uuid){
+					if (reactive_active_playlist.uuid == reactive_selected_playlist.uuid) {
 						console.log(reactive_active_playlist.uuid +
 							" " + reactive_active_playlist.curr_timestamp +
 							" " + reactive_active_playlist.curr_max_timestamp +
 							" " + reactive_active_playlist.curr_track);
-						reactive_selected_playlist.curr_track = reactive_active_playlist.curr_track; 
+						reactive_selected_playlist.curr_track = reactive_active_playlist.curr_track;
 						reactive_selected_playlist.curr_timestamp = reactive_active_playlist.curr_timestamp;
 						reactive_selected_playlist.curr_max_timestamp = reactive_active_playlist.curr_max_timestamp;
 					}
 					break;
 				case "pause_track":
 					break;
-				case "resume_track":	
+				case "resume_track":
 					break;
 				case "stop_track":
 					break;

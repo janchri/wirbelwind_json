@@ -102,9 +102,11 @@
 			</div>
 			<div id="wifi" style="padding-left: 1em;">
 				<details>
-					<summary class="add_curser_pointer" v-on:click="scanWifis()">
-						WiFi <img src="icons/material-icons/wifi_black_24dp.svg" alt="Updates">
+					<summary class="add_curser_pointer" v-on:click="toggleWifi()">
+						WiFi <img src="icons/material-icons/wifi_black_24dp.svg" alt="WiFi">
 					</summary>
+					Auto-Connect
+					<input type="checkbox" v-model.lazy="wifi_task_state" true-value="true" false-value="false" />
 					<table>
 						<thead>
 							<tr>
@@ -139,7 +141,7 @@
 			</div>
 			<div id="updates" style="padding-left: 1em">
 				<details>
-					<summary class="add_curser_pointer" v-on:click="findUpdates()">
+					<summary class="add_curser_pointer" v-on:click="toggleUpdates()">
 						Updates <img src="icons/material-icons/update_black_24dp.svg" alt="Updates">
 					</summary>
 					<ul>
