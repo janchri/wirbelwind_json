@@ -10,23 +10,10 @@
     ],
     "list_update_folders": [
         {
-            "sd_path": "/www/pub/icons"
-        },
-        {
-            "sd_path": "/www/pub/icons/material-icons"
-        },
-        {
             "sd_path": "/www/pub/images"
-        },
-        {
-            "sd_path": "/www/pub/scripts"
         }
     ],
     "list_update_files": [
-        {
-            "uri_local": "/www/pub/favicon.ico",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/favicon.ico"
-        },
         {
             "uri_local": "/www/pub/index.htm",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/index.htm"
@@ -39,24 +26,6 @@
             "uri_local": "/www/pub/style.css",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/style.css"
         },
-
-        {
-            "uri_local": "/www/pub/scripts/vue.global.prod.js.gz",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/vue.global.prod.js.gz"
-        },
-        {
-            "uri_local": "/www/pub/scripts/vuex.global.js.gz",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/vuex.global.js.gz"
-        },
-        {
-            "uri_local": "/www/pub/scripts/axios.min.js.gz",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/axios.min.js.gz"
-        },
-        {
-            "uri_local": "/www/pub/scripts/axios.min.map",
-            "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/scripts/axios.min.map"
-        },
-
         {
             "uri_local": "/config/version.json",
             "uri_remote": "https://raw.githubusercontent.com/janchri/wirbelwind_json/main/version.json"
