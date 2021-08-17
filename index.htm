@@ -30,7 +30,7 @@
 				<div id="card_image">
 					<div id="card_edit">
 						<form style="text-align:center">
-							<input v-model.lazy="update_name" type="text" placeholder=''
+							<input v-model.lazy="update_name" type="text" placeholder='' @keypress.enter.prevent
 								style="background-color:inherit; margin-top: 1em;" />
 						</form>
 						<img src="icons/material-icons/volume_up_black_24dp.svg" alt="Volume UP">
